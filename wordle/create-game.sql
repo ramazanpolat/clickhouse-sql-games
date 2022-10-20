@@ -1,4 +1,4 @@
---DROP DATABASE IF EXISTS wordle;
+DROP DATABASE IF EXISTS wordle;
 CREATE DATABASE wordle;
 
 USE wordle;
@@ -96,4 +96,4 @@ WHERE length(s)=5;
 
 INSERT INTO games SELECT 1 as game_id, 0 as try, random_word() as target_str, '' as input_str;
 
-SELECT 'Wordle game created successfully.'
+SELECT '`Wordle` game created successfully.'

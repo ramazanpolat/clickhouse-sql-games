@@ -5,17 +5,19 @@ USE guess_number;
 
 CREATE TABLE state
 (
-    `key` Int32 MATERIALIZED 1,
-    `down` Int32,
-    `up` Int32,
-    `guess` Int32 MATERIALIZED intDiv(up + down, 2)
+    key UInt8 MATERIALIZED 1,
+    down UInt16,
+    up UInt16,
+    try UInt16,
+    guess ALIAS intDiv(up + down, 2)
 )
 ENGINE = EmbeddedRocksDB
 PRIMARY KEY key;
 
+INSERT INTO state(down,up,try) VALUES(1,100,0);
+
 CREATE TABLE input
 (
-    `dt` DateTime64(3) MATERIALIZED now64(),
     `s` String
 )
 ENGINE = Memory;
@@ -25,33 +27,45 @@ CREATE TABLE output
     `dt` DateTime MATERIALIZED now(),
     `s` String
 )
-ENGINE = MergeTree ORDER BY dt;
-
-DROP TABLE state_mv1;
+ENGINE = Memory;
 
 CREATE MATERIALIZED VIEW state_mv1 TO state AS
 WITH (
-        SELECT (down, up, guess)
+        SELECT (down, up, guess, try)
         FROM state
     ) AS my_state
 SELECT
-    if(s = 'up', my_state.3, my_state.1) AS down,
-    if(s = 'up', my_state.2, my_state.3) AS up
+    if(lower(s) = 'up', my_state.3, my_state.1) AS down,
+    if(lower(s) = 'up', my_state.2, my_state.3) AS up,
+    1 + my_state.4 as try
 FROM input
-WHERE length(extractAll(s,'\d+')) = 0;
+WHERE lower(s)='up' or lower(s)='down';
 
 CREATE MATERIALIZED VIEW state_mv2 TO state AS
 WITH
-	extractAll(s,'\d+') as numbers, 
-	length(numbers)=2 AS has_numbers, 
+	extractAll(s,'\d+') as numbers,
+	length(numbers)=2 AS has_numbers,
 	if(has_numbers,toInt32OrZero(numbers[1]),0) as number1,
 	if(has_numbers,toInt32OrZero(numbers[2]),0) as number2
-SELECT number1 as down, number2 as up
+SELECT number1 as down, number2 as up, 0 as try
 FROM input
-WHERE has_numbers and number1< number2;
+WHERE has_numbers and number1 < number2;
 
-CREATE MATERIALIZED VIEW output_mv TO output
-SELECT format('My guess is {0}', CAST(guess, 'String')) AS s
+CREATE MATERIALIZED VIEW output_mv TO output AS
+WITH 
+	format('New game between {0} and {1}. Is it {2}?', down::String, up::String, guess::String) as if_new_game,
+	format('It is definitely {0}!', guess::String) as if_last_number,
+	format('My guess is {0}', guess::String) as normal_guess,
+	'You are cheating!' as cheating
+SELECT 
+	multiIf(
+	try=0,
+		if_new_game,
+	try>0 AND down+1=guess AND guess+1=up,
+		if_last_number,
+	guess <= down OR guess >=up,
+		cheating,
+	normal_guess) as s
 FROM state;
 
 SET allow_experimental_live_view=1;
@@ -63,7 +77,6 @@ SELECT
     line.2 AS message
 FROM output
 WHERE dt > (now() - 5);
-*/
---watch game;
---INSERT INTO state VALUES (1,100);
---INSERT INTO input VALUES ('up');
+
+SELECT '`Guess the number` game created successfully.'
+
