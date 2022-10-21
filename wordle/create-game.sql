@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS words
     `word` String
 )
 ENGINE = TinyLog 
-AS SELECT rowNumberInAllBlocks() as id, c1 as word FROM url('https://raw.githubusercontent.com/charlesreid1/five-letter-words/master/sgb-words.txt', 'CSV') ORDER BY word;
+AS SELECT rowNumberInAllBlocks() as id, c1 as word FROM url('https://raw.githubusercontent.com/ramazanpolat/clickhouse-sql-games/main/wordle/sgb-words.txt', 'CSV') ORDER BY word;
 
 DROP FUNCTION IF EXISTS compare;
 CREATE FUNCTION IF NOT EXISTS compare AS (targ, inp) ->  arrayMap((i, c) -> multiIf(c = (targ[i]), 2, has(targ, c), 1, 0), [1,2,3,4,5], inp);
