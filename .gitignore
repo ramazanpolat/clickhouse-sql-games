@@ -1,2 +1,16 @@
 .DS_Store
 
+# State written by a ClickHouse server that was started with the repo root as its working
+# directory (`clickhouse server` with no --path). Start the server elsewhere; never commit these.
+/access/
+/data/
+/metadata/
+/metadata_dropped/
+/preprocessed_configs/
+/store/
+/user_defined/
+/user_files/
+/format_schemas/
+/tmp/
+/status
+/uuid
