@@ -1,0 +1,9 @@
+-- Removes everything create-game.sql made.
+DROP DATABASE IF EXISTS wordle;
+DROP FUNCTION IF EXISTS wordle_compare;
+DROP FUNCTION IF EXISTS wordle_colored;
+DROP FUNCTION IF EXISTS wordle_random_word;
+DROP FUNCTION IF EXISTS wordle_game_id;
+DROP FUNCTION IF EXISTS wordle_try;
+DROP FUNCTION IF EXISTS wordle_target;
+DROP FUNCTION IF EXISTS wordle_game_over;

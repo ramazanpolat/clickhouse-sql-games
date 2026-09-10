@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Live board for wordle. Keep it running in one terminal while you INSERT your moves from another.
+# Live board for guess_number. Keep it running in one terminal while you INSERT your moves from another.
 #
 #   ./watch.sh [-- <clickhouse-client args>]
 set -euo pipefail

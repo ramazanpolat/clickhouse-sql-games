@@ -1,0 +1,12 @@
+<!-- The image restricts the passwordless `default` user to connections from inside the container.
+     Open it up so clickhouse-client on the host can play too; docker-compose.yml only publishes
+     the ports on 127.0.0.1, so this still means "this machine only". -->
+<clickhouse>
+    <users>
+        <default>
+            <networks replace="replace">
+                <ip>::/0</ip>
+            </networks>
+        </default>
+    </users>
+</clickhouse>
