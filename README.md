@@ -122,4 +122,6 @@ Wrote a game in ClickHouse SQL? Open a pull request. Keep it in its own director
 
 ## License
 
-[MIT](LICENSE)
+Apache License 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE).
+
+Relicensed from MIT to Apache-2.0 on 2026-10-10; commits before that date remain available under MIT as well.
